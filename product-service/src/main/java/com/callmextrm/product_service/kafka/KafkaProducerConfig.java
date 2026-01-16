@@ -1,6 +1,7 @@
 package com.callmextrm.product_service.kafka;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.callmextrm.events.ProductCreatedEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;

@@ -2,20 +2,24 @@ package com.callmextrm.order_microservice;
 
 import com.callmextrm.order_microservice.DTO.CreateOrderRequest;
 import com.callmextrm.order_microservice.entity.Order;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/orders")
+    @RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
 
 
+    @GetMapping("/hi")
+    public String hi(){
+        log.info("Saying hi");
+        return "hi";
+    }
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }

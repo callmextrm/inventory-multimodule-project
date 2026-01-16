@@ -1,7 +1,8 @@
-package com.callmextrm.inventory_service.kafka.product______Inventory;
+package com.callmextrm.inventory_service.kafka;
 
 import com.callmextrm.inventory_service.Inventory;
 import com.callmextrm.inventory_service.InventoryRepository;
+import lombok.RequiredArgsConstructor;
 import org.callmextrm.events.ProductCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,14 +10,12 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ProductEventConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(ProductEventConsumer.class);
     private final InventoryRepository inventoryDao;
 
-    public ProductEventConsumer(InventoryRepository inventoryDao) {
-        this.inventoryDao = inventoryDao;
-    }
 
     @KafkaListener(topics = "product_created", groupId = "inventory_service")
     public void onProductCreated(ProductCreatedEvent event){

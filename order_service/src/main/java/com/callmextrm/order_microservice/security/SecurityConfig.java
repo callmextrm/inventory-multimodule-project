@@ -1,4 +1,4 @@
-package com.callmextrm.product_service.security;
+package com.callmextrm.order_microservice.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,16 +22,16 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
-//                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/products/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/products/**").hasAnyRole("USER", "ADMIN", "PRODUCT_MANAGER")
-//                        .requestMatchers(HttpMethod.POST, "/products/**").hasAnyRole("ADMIN", "PRODUCT_MANAGER")
-//                        .requestMatchers(HttpMethod.PATCH, "/products/**").hasAnyRole("ADMIN", "PRODUCT_MANAGER")
-//                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products/**").hasAnyRole("USER", "ADMIN", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/products/**").hasAnyRole("ADMIN", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.PATCH, "/products/**").hasAnyRole("ADMIN", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
                 )
-//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

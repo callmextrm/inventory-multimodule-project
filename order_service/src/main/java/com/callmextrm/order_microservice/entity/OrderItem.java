@@ -1,15 +1,14 @@
 package com.callmextrm.order_microservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @Table(name = "order_item")
 public class OrderItem {
@@ -21,6 +20,7 @@ public class OrderItem {
     private Integer quantity;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private Order order;
 
 

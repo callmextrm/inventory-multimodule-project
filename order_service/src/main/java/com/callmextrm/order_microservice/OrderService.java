@@ -6,23 +6,25 @@ import com.callmextrm.order_microservice.entity.Order;
 import com.callmextrm.order_microservice.entity.OrderItem;
 import com.callmextrm.order_microservice.entity.Status;
 import com.callmextrm.order_microservice.kafka.OrderEventProducer;
+import com.callmextrm.order_microservice.productClient.ProductClient;
 import com.callmextrm.order_microservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.callmextrm.events.OrderCreatedEvent;
 import org.callmextrm.events.OrderLines;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderDao;
     private final OrderEventProducer producer;
+    private final ProductClient productClient;
 
 
     public Order createOrder(CreateOrderRequest request) {
@@ -38,18 +40,14 @@ public class OrderService {
         Order order = Order.builder()
                 .userId(userId)
                 .username(username)
-                .roles(roles)
+                .roles(roles).createdAt(Instant.now())
                 .status(Status.CREATED).build();
 
 
         // 2) Add items (using helper method so FK is set)
 
         for (OrderItemRequest itemRequest : request.items()) {
-            OrderItem item = OrderItem.builder()
-                    .productId(itemRequest.productId())
-                    .productName(itemRequest.productName())
-                    .quantity(itemRequest.quantity()).build();
-            order.addItem(item);
+            productClient.assertProductExists(itemRequest.productId());
         }
         // 3) Save once (cascade saves items)
 
