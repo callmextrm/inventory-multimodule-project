@@ -13,10 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.callmextrm.events.OrderCreatedEvent;
 import org.callmextrm.events.OrderLines;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -26,19 +31,24 @@ public class OrderService {
     private final OrderEventProducer producer;
     private final ProductClient productClient;
 
+    private Authentication getAuth(){
+        return SecurityContextHolder.getContext().getAuthentication();
+    }
 
     public Order createOrder(CreateOrderRequest request) {
         // LATER: replace with real values from JWT / SecurityContext
 
-        Long userId = 1L;
-        String username = "ahmed";
-        String roles = "ADMIN";
+
+        Authentication auth = getAuth();
+
+        String username = auth.getName();
+        String roles = auth.getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
         log.info("Creating order for user={}, with roles={}", username, roles);
 
 
         // 1) Create order
         Order order = Order.builder()
-                .userId(userId)
                 .username(username)
                 .roles(roles).createdAt(Instant.now())
                 .status(Status.CREATED).build();
@@ -59,7 +69,7 @@ public class OrderService {
                 .map(i -> new OrderLines(i.getProductId(), i.getProductName(), i.getQuantity()))
                 .toList();
 
-        producer.publishOrderCreated(new OrderCreatedEvent(saved.getId(), saved.getUserId(), saved.getUsername(), saved.getRoles(), lines));
+        producer.publishOrderCreated(new OrderCreatedEvent(saved.getId(), saved.getUsername(), saved.getRoles(), lines));
         log.info("OrderCreatedEvent sent to Kafka for orderId={}", saved.getId());
         return saved;
     }

@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.List;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/  notifications")
 public class NotificationController {
     private final NotificationService notificationService;
     private final NotificationSseService notificationSseService;
